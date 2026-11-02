@@ -1,11 +1,13 @@
 package com.demo.springaidemo.tool;
 
+import com.demo.springaidemo.anno.AgentTool;
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-@Component//交给 Spring 管理，Spring 能扫描到这个类
+@Component
+@AgentTool(group = "basic", permission = {"admin"})
 public class TimeTools {
 
     //**Spring AI 的核心注解**，告诉大模型：这是一个可以调用的工具，description 描述非常重要！大模型靠这段文字判断什么时候用这个函数。

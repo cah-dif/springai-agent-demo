@@ -31,3 +31,11 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# 密钥配置，不要上传带真实api-key的配置
+src/main/resources/application.yml
+src/main/resources/application-dev.yml
+
+# 日志文件
+*.log
+

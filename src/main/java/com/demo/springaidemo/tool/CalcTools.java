@@ -1,9 +1,11 @@
 package com.demo.springaidemo.tool;
 
+import com.demo.springaidemo.anno.AgentTool;
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.stereotype.Component;
 
 @Component
+@AgentTool(group = "basic", permission = {"user", "admin"})
 public class CalcTools {
 
     //这个@Tool要紧紧挨着方法，不要空行
