@@ -1,5 +1,6 @@
 package com.demo.springaidemo.controller;
 
+import com.demo.springaidemo.anno.AgentTool;
 import com.demo.springaidemo.context.AgentSessionContext;
 import com.demo.springaidemo.registry.ToolRegistry;
 import lombok.AllArgsConstructor;
@@ -11,6 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.demo.springaidemo.log.AgentLogManager;
 import com.demo.springaidemo.log.AgentToolCallLog;
 import java.time.LocalDateTime;
+import com.demo.springaidemo.context.AgentSessionContext;
+
 
 
 import java.util.List;
@@ -20,12 +23,12 @@ import java.util.Map;
 @RestController
 @RequestMapping("/chat")
 @AllArgsConstructor
+
 public class ChatController {
 
     private final ChatClient.Builder chatClientBuilder;
     private final ToolRegistry toolRegistry;
     private final AgentLogManager agentLogManager;
-
 
     @GetMapping("/ask")
     public String ask(String question, String role, String sessionId) {

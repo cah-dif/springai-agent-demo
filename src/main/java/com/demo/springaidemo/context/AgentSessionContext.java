@@ -6,6 +6,7 @@ public class AgentSessionContext {
     // 用户身份有user / admin
     private String role;
 
+
     public String getSessionId() {
         return sessionId;
     }
