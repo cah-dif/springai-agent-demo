@@ -74,7 +74,7 @@
 <script>
     const logBody = document.getElementById("logBody");
     async function loadLog(){
-        const res = await fetch("/log/list");
+        const res = await fetch("/chat/log");
         const list = await res.json();
         list.forEach(item=>{
             const tr = document.createElement("tr");

@@ -11,7 +11,7 @@ import java.util.List;
 @Component
 public class AgentLogManager {
     // 内存集合存放所有日志
-    private final List<AgentToolCallLog> logList = new ArrayList<>();
+    private final List<AgentToolCallLog> logList = new CopyOnWriteArrayList<>();
 
     // 添加一条日志
     public void addLog(AgentToolCallLog log){
