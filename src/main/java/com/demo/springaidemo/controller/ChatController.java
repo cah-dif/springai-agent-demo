@@ -4,10 +4,12 @@ import com.demo.springaidemo.anno.AgentTool;
 import com.demo.springaidemo.context.AgentSessionContext;
 import com.demo.springaidemo.registry.ToolRegistry;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.demo.springaidemo.log.AgentLogManager;
 import com.demo.springaidemo.log.AgentToolCallLog;
@@ -39,7 +41,11 @@ public class ChatController {
         context.setSessionId(sessionId);
 
         // 构造日志记录，这里先填充会话、角色，工具相关字段先填空字符串预留
-         AgentToolCallLog toolLog = new AgentToolCallLog(sessionId, role, "", "", "", "",LocalDateTime.now());
+         AgentToolCallLog toolLog = new AgentToolCallLog();
+         toolLog.setSessionId(sessionId);
+         toolLog.setRole(role);
+         toolLog.setQuestion(question);
+         toolLog.setCallTime(LocalDateTime.now());
          agentLogManager.addLog(toolLog);
 
 
@@ -59,12 +65,18 @@ public class ChatController {
         log.info("AI返回结果：{}", res);
         return res;
     }
-    @GetMapping("/log")
-    public List<AgentToolCallLog> getLog(){
+   /** 查全部调用日志 */
+@GetMapping("/logs")
+    public Object logs(@RequestParam(required = false) String sessionId) {
+    if (sessionId == null || sessionId.isEmpty()) {
         return agentLogManager.getAllLog();
+    }
+    return agentLogManager.getLogsBySession(sessionId);
+}
+
  }
 
-}
+
 
 //这就是业务入口。浏览器访问这个地址，才会触发调用 AI 的逻辑。
 //这是整个 Demo 的核心业务代码。

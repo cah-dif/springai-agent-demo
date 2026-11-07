@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>工具调用审计日志</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft Yahei", sans-serif;
+        }
+        body {
+            background-color: #f4f7fa;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius:16px;
+            box-shadow:0 4px 16px rgba(0,0,0,0.08);
+            overflow:hidden;
+        }
+        .header {
+            background:#4080ff;
+            color:white;
+            padding:18px 24px;
+            font-size:18px;
+            font-weight:600;
+        }
+        .content {
+            padding:20px;
+        }
+        table {
+            width:100%;
+            border-collapse: collapse;
+        }
+        th,td {
+            border:1px solid #eee;
+            padding:12px;
+            text-align:left;
+            font-size:14px;
+        }
+        th {
+            background:#f7f8fa;
+        }
+        .tip {
+            margin-bottom:16px;
+            color:#666;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">工具调用审计日志</div>
+    <div class="content">
+        <div class="tip">记录大模型触发的所有工具调用记录</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>时间</th>
+                    <th>会话ID</th>
+                    <th>工具名称</th>
+                    <th>入参</th>
+                    <th>返回结果</th>
+                </tr>
+            </thead>
+            <tbody id="logBody"></tbody>
+        </table>
+    </div>
+</div>
+<script>
+    const logBody = document.getElementById("logBody");
+    async function loadLog(){
+        const res = await fetch("/log/list");
+        const list = await res.json();
+        list.forEach(item=>{
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td>${item.time}</td>
+                <td>${item.sessionId}</td>
+                <td>${item.toolName}</td>
+                <td>${item.params}</td>
+                <td>${item.result}</td>
+            `;
+            logBody.appendChild(tr);
+        })
+    }
+    loadLog();
+</script>
+</body>
+</html>
