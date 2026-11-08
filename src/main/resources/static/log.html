@@ -11,44 +11,52 @@
             box-sizing: border-box;
             font-family: "Microsoft Yahei", sans-serif;
         }
+
         body {
             background-color: #f4f7fa;
             padding: 20px;
         }
+
         .container {
             max-width: 900px;
             margin: 0 auto;
             background: #fff;
-            border-radius:16px;
-            box-shadow:0 4px 16px rgba(0,0,0,0.08);
-            overflow:hidden;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
         }
+
         .header {
-            background:#4080ff;
-            color:white;
-            padding:18px 24px;
-            font-size:18px;
-            font-weight:600;
+            background: #4080ff;
+            color: white;
+            padding: 18px 24px;
+            font-size: 18px;
+            font-weight: 600;
         }
+
         .content {
-            padding:20px;
+            padding: 20px;
         }
+
         table {
-            width:100%;
+            width: 100%;
             border-collapse: collapse;
         }
-        th,td {
-            border:1px solid #eee;
-            padding:12px;
-            text-align:left;
-            font-size:14px;
+
+        th, td {
+            border: 1px solid #eee;
+            padding: 12px;
+            text-align: left;
+            font-size: 14px;
         }
+
         th {
-            background:#f7f8fa;
+            background: #f7f8fa;
         }
+
         .tip {
-            margin-bottom:16px;
-            color:#666;
+            margin-bottom: 16px;
+            color: #666;
         }
     </style>
 </head>
@@ -59,13 +67,16 @@
         <div class="tip">记录大模型触发的所有工具调用记录</div>
         <table>
             <thead>
-                <tr>
-                    <th>时间</th>
-                    <th>会话ID</th>
-                    <th>工具名称</th>
-                    <th>入参</th>
-                    <th>返回结果</th>
-                </tr>
+            <tr>
+                <th>时间</th>
+                <th>会话ID</th>
+                <th>角色</th>
+                <th>调用工具</th>
+                <th>入参</th>
+                <th>工具返回</th>
+                <th>AI回答</th>
+            </tr>
+
             </thead>
             <tbody id="logBody"></tbody>
         </table>
@@ -73,22 +84,40 @@
 </div>
 <script>
     const logBody = document.getElementById("logBody");
-    async function loadLog(){
-        const res = await fetch("/chat/log");
-        const list = await res.json();
-        list.forEach(item=>{
-            const tr = document.createElement("tr");
-            tr.innerHTML = `
-                <td>${item.time}</td>
-                <td>${item.sessionId}</td>
-                <td>${item.toolName}</td>
-                <td>${item.params}</td>
-                <td>${item.result}</td>
-            `;
-            logBody.appendChild(tr);
-        })
+
+    async function loadLog() {
+        try {
+            const res = await fetch("/chat/logs");   // ✅ 注意结尾的 s
+            if (!res.ok) throw new Error("HTTP " + res.status);
+            const list = await res.json();
+
+            logBody.innerHTML = "";
+            if (list.length === 0) {
+                logBody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#999">暂无日志，请先去 chat.html 发几条对话</td></tr>';
+                return;
+            }
+
+            list.forEach(item => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                  <td>${item.callTime ?? ""}</td>
+                  <td>${item.sessionId ?? ""}</td>
+                  <td>${item.role ?? ""}</td>
+                  <td>${item.toolClassName ? item.toolClassName + "." + item.methodName : "未调用工具"}</td>
+                  <td>${item.params ?? ""}</td>
+                  <td>${item.result ?? ""}</td>
+                  <td>${item.answer ?? ""}</td>
+`;
+
+                logBody.appendChild(tr);
+            });
+        } catch (e) {
+            logBody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#d33">加载失败：' + e.message + '</td></tr>';
+        }
     }
+
     loadLog();
 </script>
+
 </body>
 </html>

@@ -1,5 +1,6 @@
 package com.demo.springaidemo.controller;
 
+import com.demo.springaidemo.context.AgentLogContext;
 import com.demo.springaidemo.context.AgentSessionContext;
 import com.demo.springaidemo.log.AgentLogManager;
 import com.demo.springaidemo.log.AgentToolCallLog;
@@ -51,16 +52,22 @@ public class ChatController {
         Object[] toolsArr = availableToolBeans.values().toArray();
 
         // 关键：工具绑定在本次请求的 prompt 上，不修改共享的 Builder
-        String res = chatClient.prompt()
-                .user(question)
-                .tools(toolsArr)
-                .call()
-                .content();
+        AgentLogContext.set(toolLog);   // ✅ 塞进当前线程
+        String res;
+        try {
+            res = chatClient.prompt()
+                    .user(question)
+                    .tools(toolsArr)
+                    .call()
+                    .content();
+        } finally {
+            AgentLogContext.clear();    // ✅ 一定要清，否则线程复用会串数据
+        }
 
-        toolLog.setResult(res);
-        log.info("AI返回结果：{}", res);
+        toolLog.setAnswer(res);// ✅ 最终回答单独存
         return res;
     }
+
 
     @GetMapping("/logs")
     public Object logs(@RequestParam(required = false) String sessionId) {
