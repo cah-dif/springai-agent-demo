@@ -64,7 +64,11 @@
 <div class="container">
     <div class="header">工具调用审计日志</div>
     <div class="content">
-        <div class="tip">记录大模型触发的所有工具调用记录</div>
+        <div class="tip">
+            记录大模型触发的所有工具调用记录
+            <a href="/chat.html" style="margin-left:20px;color:#4080ff;text-decoration:none;">返回对话页面</a>
+        </div>
+
         <table>
             <thead>
             <tr>
@@ -86,34 +90,21 @@
     const logBody = document.getElementById("logBody");
 
     async function loadLog() {
-        try {
-            const res = await fetch("/chat/logs");   // ✅ 注意结尾的 s
-            if (!res.ok) throw new Error("HTTP " + res.status);
-            const list = await res.json();
-
-            logBody.innerHTML = "";
-            if (list.length === 0) {
-                logBody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#999">暂无日志，请先去 chat.html 发几条对话</td></tr>';
-                return;
-            }
-
-            list.forEach(item => {
-                const tr = document.createElement("tr");
-                tr.innerHTML = `
-                  <td>${item.callTime ?? ""}</td>
-                  <td>${item.sessionId ?? ""}</td>
-                  <td>${item.role ?? ""}</td>
-                  <td>${item.toolClassName ? item.toolClassName + "." + item.methodName : "未调用工具"}</td>
-                  <td>${item.params ?? ""}</td>
-                  <td>${item.result ?? ""}</td>
-                  <td>${item.answer ?? ""}</td>
+        const res = await fetch("/chat/logs");
+        const list = await res.json();
+        list.forEach(item => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+    <td>${item.callTime ?? ""}</td>
+    <td>${item.sessionId ?? ""}</td>
+    <td>${item.role ?? ""}</td>
+    <td>${item.toolClassName ? item.toolClassName + "." + item.methodName : "未调用工具"}</td>
+    <td>${item.params ?? ""}</td>
+    <td>${item.result ?? ""}</td>
+    <td>${item.answer ?? ""}</td>
 `;
-
-                logBody.appendChild(tr);
-            });
-        } catch (e) {
-            logBody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#d33">加载失败：' + e.message + '</td></tr>';
-        }
+            logBody.appendChild(tr);
+        })
     }
 
     loadLog();
