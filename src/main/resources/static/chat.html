@@ -161,7 +161,15 @@
 
         async function send() {
             const content = inputMsg.value.trim();
-            if (!content) return;
+            // 新增：前端校验，空内容或超长内容不发请求
+            if (!content) {
+                append("请输入你的问题，内容不能为空", false);
+                return;
+            }
+            if (content.length > 300) {
+                append("输入内容过长，请控制在 300 个字符以内", false);
+                return;
+            }
             const role = roleSelect.value;
             append(content, true);
             inputMsg.value = "";
@@ -178,7 +186,12 @@
                 });
                 const text = await res.text();
                 loadingDiv.remove();
-                append(text, false);
+                // 新增：HTTP 状态不是 200 时明确告诉用户请求失败了
+                if (!res.ok) {
+                    append("请求失败（状态码 " + res.status + "），请稍后重试", false);
+                } else {
+                    append(text, false);
+                }
             } catch (e) {
                 loadingDiv.remove();
                 append("请求出错，请检查后端服务", false);

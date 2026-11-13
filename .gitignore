@@ -39,3 +39,9 @@ src/main/resources/application-dev.yml
 # 日志文件
 *.log
 
+# H2 数据库文件（本地运行数据，不上传）
+data/
+
+# 本地修改前的文件备份
+.backup_before_jpa_20261108/
+

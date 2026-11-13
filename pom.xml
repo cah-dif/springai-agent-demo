@@ -14,10 +14,10 @@
     <name>spring-ai-demo</name>
     <description>spring-ai-demo</description>
 
-<properties>
-    <java.version>17</java.version>
-    <spring-ai.version>1.0.0</spring-ai.version>
-</properties>
+    <properties>
+        <java.version>17</java.version>
+        <spring-ai.version>1.0.0</spring-ai.version>
+    </properties>
 
     <dependencyManagement>
         <dependencies>
@@ -44,7 +44,19 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- 这里才放 starter！！ -->
+        <!-- spring data jpa：用来操作数据库 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+
+        <!-- H2数据库：文件模式，不用另外装数据库软件 -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.ai</groupId>
             <artifactId>spring-ai-starter-model-openai</artifactId>
